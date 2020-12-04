@@ -31,6 +31,7 @@ func (r *RemoteLoadRecipes) Load(search string) ([]*entities.Recipe, error) {
 	return recipes, nil
 }
 
+// NewRemoteLoadRecipes returns new RemoteLoadRecipes
 func NewRemoteLoadRecipes(g protocols.GifRepository, p protocols.PuppyRepository) *RemoteLoadRecipes {
 	r := &RemoteLoadRecipes{
 		gifRepository:   g,
