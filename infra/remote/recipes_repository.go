@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/keony1/dm-recipe/data/protocols"
 )
@@ -29,5 +30,19 @@ func (r RecipesRepository) Load(search string) ([]protocols.PuppyResult, error) 
 		return nil, jsonConverterErr
 	}
 
-	return nil, nil
+	var ppResult []protocols.PuppyResult
+
+	for _, recipe := range ppResponse.Results {
+		xsIngredients := strings.Split(recipe.Ingredients, ",")
+
+		pr := protocols.PuppyResult{
+			Title:       recipe.Title,
+			Href:        recipe.Href,
+			Ingredients: xsIngredients,
+		}
+
+		ppResult = append(ppResult, pr)
+	}
+
+	return ppResult, nil
 }
