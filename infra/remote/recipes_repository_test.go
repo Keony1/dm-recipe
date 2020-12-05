@@ -1,6 +1,7 @@
 package remote
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -12,6 +13,18 @@ func TestRecipesRepository(t *testing.T) {
 
 		checkError(t, err, nil)
 		checkLen(t, len(got), 0)
+	})
+
+	t.Run("verify ingredients", func(t *testing.T) {
+		resp, err := r.Load("banana")
+		want := []string{"banana"}
+
+		checkError(t, err, nil)
+
+		got := resp[0].Ingredients
+		if !reflect.DeepEqual(got, want) {
+			t.Errorf("expect an array of string %v, but got %v", want, got)
+		}
 	})
 }
 
