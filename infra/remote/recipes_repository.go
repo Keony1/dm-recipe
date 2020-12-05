@@ -8,11 +8,15 @@ import (
 	"github.com/keony1/dm-recipe/data/protocols"
 )
 
+const recipePuppyURL = "http://www.recipepuppy.com/api/"
+
+// RecipesRepository is the struct used to fecht data from recipes puppy api
 type RecipesRepository struct{}
 
+// Load is the implementation of protocol defined in data layer of PuppyRepository
 func (r RecipesRepository) Load(search string) ([]protocols.PuppyResult, error) {
 
-	resp, err := http.Get(fmt.Sprintf("http://www.recipepuppy.com/api/?i=%v", search))
+	resp, err := http.Get(fmt.Sprintf("%v?i=%v", recipePuppyURL, search))
 
 	if err != nil {
 		return nil, err
