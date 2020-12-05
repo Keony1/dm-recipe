@@ -1,6 +1,8 @@
 package usecases
 
 import (
+	"fmt"
+
 	"github.com/keony1/dm-recipe/data/protocols"
 	"github.com/keony1/dm-recipe/domain/entities"
 )
@@ -14,6 +16,7 @@ type RemoteLoadRecipes struct {
 // Load remotely
 func (r *RemoteLoadRecipes) Load(search string) ([]*entities.Recipe, error) {
 	ppRecipes, _ := r.puppyRepository.Load(search)
+	fmt.Println(ppRecipes)
 
 	var recipes []*entities.Recipe
 	for _, ppRecipe := range ppRecipes {

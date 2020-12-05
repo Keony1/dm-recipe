@@ -3,39 +3,29 @@ package usecases
 import (
 	"reflect"
 	"testing"
-
-	"github.com/keony1/dm-recipe/data/protocols"
-	"github.com/keony1/dm-recipe/domain/entities"
 )
 
 func TestRemoteLoadRecipes(t *testing.T) {
-	resultPp := []protocols.PuppyResult{{Title: "any_title"}}
-	spyGif := SpyGifRepository{result: "any_gif", err: nil}
-	spyPp := SpyPuppyRepository{result: resultPp, err: nil}
+	for _, tt := range testCases {
+		t.Run(tt.name, func(t *testing.T) {
+			rl := NewRemoteLoadRecipes(tt.spyGif, tt.spyPuppy)
+			got, err := rl.Load(tt.args)
 
-	rl := NewRemoteLoadRecipes(spyGif, spyPp)
-	recipes, _ := rl.Load("any_search")
-	want := []*entities.Recipe{{Title: "any_title", Gif: "any_gif"}}
+			if tt.expectError {
+				// expecting an error
+				if err == nil {
+					t.Fatalf("RemoteLoadRecipes.Load(%q); expecting error but got nil", tt.args)
+				}
+			} else {
+				// not expecting an error
+				if err != nil {
+					t.Fatalf("RemoteLoadRecipes.Load(%q); return unexpected error: %v", tt.args, err)
+				}
 
-	if !reflect.DeepEqual(recipes, want) {
-		t.Errorf("recipes.Load() = %v, but want %v", recipes, want)
+				if !reflect.DeepEqual(got, tt.want) {
+					t.Errorf("RemoteLoadRecipes.Load(%q) = %v; got %v", tt.args, got, tt.want)
+				}
+			}
+		})
 	}
-}
-
-type SpyGifRepository struct {
-	result string
-	err    error
-}
-
-func (s SpyGifRepository) Find(title string) (string, error) {
-	return s.result, s.err
-}
-
-type SpyPuppyRepository struct {
-	result []protocols.PuppyResult
-	err    error
-}
-
-func (p SpyPuppyRepository) Load(search string) ([]protocols.PuppyResult, error) {
-	return p.result, p.err
 }
