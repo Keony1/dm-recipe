@@ -20,19 +20,16 @@ func (r RecipesRepository) Load(search string) ([]protocols.PuppyResult, error) 
 		return nil, err
 	}
 
-	dataBytes, _ := ioutil.ReadAll(resp.Body)
-
 	var ppResponse protocols.PuppyResponse
+	convertToJSON(&ppResponse, resp)
+	parsedRecipes := parseResults(ppResponse.Results)
 
-	jsonConverterErr := json.Unmarshal([]byte(dataBytes), &ppResponse)
+	return parsedRecipes, nil
+}
 
-	if jsonConverterErr != nil {
-		return nil, jsonConverterErr
-	}
-
+func parseResults(recipes []protocols.PuppyRecipe) []protocols.PuppyResult {
 	var ppResult []protocols.PuppyResult
-
-	for _, recipe := range ppResponse.Results {
+	for _, recipe := range recipes {
 		xsIngredients := strings.Split(recipe.Ingredients, ",")
 
 		pr := protocols.PuppyResult{
@@ -44,5 +41,16 @@ func (r RecipesRepository) Load(search string) ([]protocols.PuppyResult, error) 
 		ppResult = append(ppResult, pr)
 	}
 
-	return ppResult, nil
+	return ppResult
+}
+
+func convertToJSON(ppResponse *protocols.PuppyResponse, r *http.Response) error {
+	dataBytes, _ := ioutil.ReadAll(r.Body)
+	jsonConverterErr := json.Unmarshal([]byte(dataBytes), ppResponse)
+
+	if jsonConverterErr != nil {
+		return jsonConverterErr
+	}
+
+	return nil
 }
