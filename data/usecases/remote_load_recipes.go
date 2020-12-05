@@ -13,7 +13,11 @@ type RemoteLoadRecipes struct {
 
 // Load remotely
 func (r *RemoteLoadRecipes) Load(search string) ([]*entities.Recipe, error) {
-	ppRecipes, _ := r.puppyRepository.Load(search)
+	ppRecipes, err := r.puppyRepository.Load(search)
+
+	if err != nil {
+		return nil, err
+	}
 
 	var recipes []*entities.Recipe
 	for _, ppRecipe := range ppRecipes {
