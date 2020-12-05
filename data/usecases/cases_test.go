@@ -56,6 +56,25 @@ var testCases = []struct {
 		want:        nil,
 		expectError: true,
 	},
+	{
+		name: "returns error if GifRepository returns error",
+		args: "incorrect_title",
+		spyPuppy: SpyPuppyRepository{
+			result: []protocols.PuppyResult{
+				{
+					Title: "any_title",
+					Href:  "any_url",
+				},
+			},
+			err: nil,
+		},
+		spyGif: SpyGifRepository{
+			result: "",
+			err:    ErrGifRepository,
+		},
+		want:        nil,
+		expectError: true,
+	},
 }
 
 type SpyGifRepository struct {
