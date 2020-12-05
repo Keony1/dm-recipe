@@ -43,3 +43,11 @@ func checkLen(t *testing.T, got, want int) {
 		t.Errorf("RecipesRepository.Load() have len %d; but want %d", got, want)
 	}
 }
+
+func checkResponse(t *testing.T, got, want string) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("got %q; but want %q", got, want)
+	}
+}
