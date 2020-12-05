@@ -29,3 +29,12 @@ func TestRemoteLoadRecipes(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkRemoteLoadRecipes(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		for _, tt := range testCases {
+			rl := NewRemoteLoadRecipes(tt.spyGif, tt.spyPuppy)
+			rl.Load(tt.args)
+		}
+	}
+}
