@@ -28,6 +28,18 @@ func TestRecipesRepository(t *testing.T) {
 	})
 }
 
+func TestGifRepository(t *testing.T) {
+	r := GifRepository{}
+
+	t.Run("empty response", func(t *testing.T) {
+		got, err := r.Find("")
+		want := ""
+
+		checkError(t, err, nil)
+		checkResponse(t, got, want)
+	})
+}
+
 func checkError(t *testing.T, got, want error) {
 	t.Helper()
 
