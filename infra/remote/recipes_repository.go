@@ -1,9 +1,7 @@
 package remote
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"strings"
 
@@ -42,15 +40,4 @@ func parseResults(recipes []protocols.PuppyRecipe) []protocols.PuppyResult {
 	}
 
 	return ppResult
-}
-
-func convertToJSON(ppResponse *protocols.PuppyResponse, r *http.Response) error {
-	dataBytes, _ := ioutil.ReadAll(r.Body)
-	jsonConverterErr := json.Unmarshal([]byte(dataBytes), ppResponse)
-
-	if jsonConverterErr != nil {
-		return jsonConverterErr
-	}
-
-	return nil
 }
