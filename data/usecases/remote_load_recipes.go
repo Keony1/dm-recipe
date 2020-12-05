@@ -21,7 +21,11 @@ func (r *RemoteLoadRecipes) Load(search string) ([]*entities.Recipe, error) {
 
 	var recipes []*entities.Recipe
 	for _, ppRecipe := range ppRecipes {
-		gifURL, _ := r.gifRepository.Find(ppRecipe.Title)
+		gifURL, err := r.gifRepository.Find(ppRecipe.Title)
+
+		if err != nil {
+			return nil, err
+		}
 
 		recipe := &entities.Recipe{
 			Title: ppRecipe.Title,
