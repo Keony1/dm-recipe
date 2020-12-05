@@ -1,8 +1,15 @@
 package usecases
 
 import (
+	"errors"
+
 	"github.com/keony1/dm-recipe/data/protocols"
 	"github.com/keony1/dm-recipe/domain/entities"
+)
+
+var (
+	ErrGifRepository   = errors.New("Somethig is wrong with Giphy api")
+	ErrPuppyRepository = errors.New("Somethig is wrong with Puppy api")
 )
 
 var testCases = []struct {
@@ -37,6 +44,17 @@ var testCases = []struct {
 			},
 		},
 		expectError: false,
+	},
+	{
+		name: "returns error if PuppyRepository returns error",
+		args: "",
+		spyPuppy: SpyPuppyRepository{
+			result: nil,
+			err:    ErrPuppyRepository,
+		},
+		spyGif:      SpyGifRepository{"", nil},
+		want:        nil,
+		expectError: true,
 	},
 }
 
