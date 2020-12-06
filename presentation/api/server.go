@@ -41,11 +41,7 @@ func (s *Server) recipes(w http.ResponseWriter, r *http.Request) {
 		keywords = strings.Split(ingredients, ",")
 	}
 
-	if len(keywords) > 3 {
-		w.WriteHeader(http.StatusBadRequest)
-		m, _ := json.Marshal(ErrKeyWordsLimit)
-
-		fmt.Fprint(w, m)
+	if err := checkKeywords(keywords, w); err != nil {
 		return
 	}
 
@@ -69,4 +65,21 @@ func (s *Server) recipes(w http.ResponseWriter, r *http.Request) {
 	m, _ := json.Marshal(response)
 
 	fmt.Fprint(w, string(m))
+}
+
+func checkKeywords(keywords []string, w http.ResponseWriter) error {
+	if len(keywords) > 3 {
+		w.WriteHeader(http.StatusBadRequest)
+
+		kwError := presenter.Error{
+			Message: ErrKeyWordsLimit.Error(),
+		}
+		errJSON, _ := json.Marshal(kwError)
+
+		fmt.Fprint(w, string(errJSON))
+
+		return ErrKeyWordsLimit
+	}
+
+	return nil
 }
