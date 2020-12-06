@@ -7,3 +7,8 @@ type Recipe struct {
 	Link        string   `json:"link"`
 	Gif         string   `json:"gif"`
 }
+
+type Response struct {
+	Keywords []string `json:"keywords"`
+	Recipes  []Recipe `json:"recipes"`
+}
