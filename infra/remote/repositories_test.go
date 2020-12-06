@@ -38,6 +38,14 @@ func TestGifRepository(t *testing.T) {
 		checkError(t, err, nil)
 		checkResponse(t, got, want)
 	})
+
+	t.Run("at least one response", func(t *testing.T) {
+		got, err := r.Find("banana")
+		want := "https://giphy.com/gifs/eating-banana-drill-1fHlf4mgS2JPy"
+
+		checkError(t, err, nil)
+		checkResponse(t, got, want)
+	})
 }
 
 func checkError(t *testing.T, got, want error) {
