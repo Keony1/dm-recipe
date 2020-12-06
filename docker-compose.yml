@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  recipe:
+    image: keony/dm-recipe
+    container_name: recipe
+    ports: 
+      - 8080:8080
+    volumes:
+      - .:/usr/src
