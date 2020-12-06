@@ -31,9 +31,11 @@ func TestServer_recipes(t *testing.T) {
 		json.Unmarshal(res.Body.Bytes(), &r)
 
 		wantKeyWords := make([]string, len(r.Keywords), cap(r.Keywords))
+
 		assertKeyWords(t, r.Keywords, wantKeyWords)
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
+		assertBody(t, r.Recipes[0].Title, loadResults[0].Title)
 	})
 
 	t.Run("with ingredients", func(t *testing.T) {
@@ -44,9 +46,10 @@ func TestServer_recipes(t *testing.T) {
 		var r presenter.Response
 		json.Unmarshal(res.Body.Bytes(), &r)
 
-		assertKeyWords(t, r.Keywords, []string{"banana", "ice"})
-		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
+		assertContentType(t, res, jsonContentType)
+		assertKeyWords(t, r.Keywords, []string{"banana", "ice"})
+		assertBody(t, r.Recipes[0].Title, loadResults[0].Title)
 	})
 
 	t.Run("more than 3 ingredients", func(t *testing.T) {
