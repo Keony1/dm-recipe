@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -9,6 +10,8 @@ import (
 	domain "github.com/keony1/dm-recipe/domain/usecases"
 	"github.com/keony1/dm-recipe/presentation/presenter"
 )
+
+var ErrKeyWordsLimit = errors.New("Only 3 ingredients allowed")
 
 type Server struct {
 	http.Handler
@@ -36,6 +39,14 @@ func (s *Server) recipes(w http.ResponseWriter, r *http.Request) {
 	if len(params) > 0 {
 		ingredients = params[0]
 		keywords = strings.Split(ingredients, ",")
+	}
+
+	if len(keywords) > 3 {
+		w.WriteHeader(http.StatusBadRequest)
+		m, _ := json.Marshal(ErrKeyWordsLimit)
+
+		fmt.Fprint(w, m)
+		return
 	}
 
 	results, _ := s.LoadRecipes.Load(ingredients)
