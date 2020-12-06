@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+
+	"github.com/keony1/dm-recipe/config"
 )
 
-const giphyURL = "http://api.giphy.com/v1/gifs/search"
+const giphyURL = "https://api.giphy.com/v1/gifs/search"
 
 // GifRepository is the struct used to fetch data from giphy api
 type GifRepository struct{}
@@ -15,7 +17,7 @@ type GifRepository struct{}
 func (g GifRepository) Find(title string) (string, error) {
 	qt := url.QueryEscape(title)
 
-	resp, err := http.Get(fmt.Sprintf("%v?q=%v&api_key=s9GY9cDxXGHLCVCZifd0lh0rP8x1o2lh", giphyURL, qt))
+	resp, err := http.Get(fmt.Sprintf("%v?api_key=%v&q=%v&", giphyURL, config.GIPHY_KEY, qt))
 
 	if err != nil {
 		return "", err
