@@ -12,25 +12,36 @@ import (
 )
 
 func TestServer_recipes(t *testing.T) {
+	loadResults := []*entities.Recipe{
+		{
+			Title: "ice cream",
+		},
+	}
+	spyLoadRecipes := SpyLoadRecipes{results: loadResults, err: nil}
+	server := NewServer(spyLoadRecipes)
+	res := httptest.NewRecorder()
+
 	t.Run("without query param", func(t *testing.T) {
-		loadResults := []*entities.Recipe{
-			{
-				Title: "ice cream",
-			},
-		}
-
-		spyLoadRecipes := SpyLoadRecipes{results: loadResults, err: nil}
-
-		server := NewServer(spyLoadRecipes)
-
 		req, _ := http.NewRequest(http.MethodGet, "/recipes", nil)
-		res := httptest.NewRecorder()
+
 		server.ServeHTTP(res, req)
 
 		var r presenter.Response
 		json.Unmarshal(res.Body.Bytes(), &r)
 
 		assertKeyWords(t, r.Keywords, nil)
+		assertContentType(t, res, jsonContentType)
+		assertStatusCode(t, res.Code, http.StatusOK)
+	})
+
+	t.Run("with query param", func(t *testing.T) {
+		req, _ := http.NewRequest(http.MethodGet, "/recipes?i=banana, ice", nil)
+		server.ServeHTTP(res, req)
+
+		var r presenter.Response
+		json.Unmarshal(res.Body.Bytes(), &r)
+
+		assertKeyWords(t, r.Keywords, []string{"banana", "ice"})
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
