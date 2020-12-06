@@ -28,7 +28,7 @@ http://{HOST}/recipes/?i={ingredient_1},{ingredient_2},{ingredient_3}
 Example:
 
 `
-http://127.0.0.1/recipes/?i=onion,tomato
+http://127.0.0.1:8080/recipes/?i=onion,tomato
 `
 
 Return:
