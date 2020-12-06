@@ -11,13 +11,16 @@ import (
 	"github.com/keony1/dm-recipe/presentation/presenter"
 )
 
+// ErrKeyWordsLimit is returned when i param is more than 3
 var ErrKeyWordsLimit = errors.New("Only 3 ingredients allowed")
 
+// Server is used to handle http
 type Server struct {
 	http.Handler
 	LoadRecipes domain.LoadRecipes
 }
 
+// NewServer returns a Server to handle http
 func NewServer(lr domain.LoadRecipes) *Server {
 	s := new(Server)
 	s.LoadRecipes = lr
