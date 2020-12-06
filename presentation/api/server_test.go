@@ -54,11 +54,20 @@ func TestServer_recipes(t *testing.T) {
 		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)
 
-		var r presenter.Response
+		var r presenter.Error
 		json.Unmarshal(res.Body.Bytes(), &r)
 
+		assertBody(t, r.Message, ErrKeyWordsLimit.Error())
 		assertStatusCode(t, res.Code, http.StatusBadRequest)
 	})
+}
+
+func assertBody(t *testing.T, got, want interface{}) {
+	t.Helper()
+
+	if got != want {
+		t.Errorf("response.Body = %v, but got %v", got, want)
+	}
 }
 
 func newRecipesRequest(i string) *http.Request {
