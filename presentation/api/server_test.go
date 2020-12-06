@@ -24,6 +24,7 @@ func TestServer_recipes(t *testing.T) {
 		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)
 
+		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
 }
@@ -33,6 +34,15 @@ func assertStatusCode(t *testing.T, got, want int) {
 
 	if got != want {
 		t.Errorf("expect status code to be %d, but got %d", want, got)
+	}
+}
+
+const jsonContentType = "application/json"
+
+func assertContentType(t *testing.T, response *httptest.ResponseRecorder, want string) {
+	t.Helper()
+	if response.Result().Header.Get("content-type") != want {
+		t.Errorf("response did not have content-type of %s, got %v", want, response.Result().Header)
 	}
 }
 
