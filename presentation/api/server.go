@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	domain "github.com/keony1/dm-recipe/domain/usecases"
 	"github.com/keony1/dm-recipe/presentation/presenter"
@@ -30,9 +31,11 @@ func (s *Server) recipes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	params := r.URL.Query()["i"]
 
+	keywords := []string{}
 	var ingredients string
 	if len(params) > 0 {
 		ingredients = params[0]
+		keywords = strings.Split(ingredients, ",")
 	}
 
 	results, _ := s.LoadRecipes.Load(ingredients)
@@ -47,6 +50,12 @@ func (s *Server) recipes(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	json.NewEncoder(w).Encode(recipes)
-	fmt.Fprint(w, recipes)
+	response := presenter.Response{
+		Keywords: keywords,
+		Recipes:  recipes,
+	}
+
+	m, _ := json.Marshal(response)
+
+	fmt.Fprint(w, string(m))
 }
