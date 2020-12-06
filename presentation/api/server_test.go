@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -21,8 +22,8 @@ func TestServer_recipes(t *testing.T) {
 	server := NewServer(spyLoadRecipes)
 	res := httptest.NewRecorder()
 
-	t.Run("without query param", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/recipes", nil)
+	t.Run("without ingredients", func(t *testing.T) {
+		req := newRecipesRequest("")
 
 		server.ServeHTTP(res, req)
 
@@ -34,8 +35,8 @@ func TestServer_recipes(t *testing.T) {
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
 
-	t.Run("with query param", func(t *testing.T) {
-		req, _ := http.NewRequest(http.MethodGet, "/recipes?i=banana, ice", nil)
+	t.Run("with ingredients", func(t *testing.T) {
+		req := newRecipesRequest("banana, ice")
 		server.ServeHTTP(res, req)
 
 		var r presenter.Response
@@ -45,6 +46,12 @@ func TestServer_recipes(t *testing.T) {
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
+}
+
+func newRecipesRequest(i string) *http.Request {
+	req, _ := http.NewRequest(http.MethodGet, fmt.Sprintf("/recipes?i=%v", i), nil)
+
+	return req
 }
 
 func assertKeyWords(t *testing.T, got, want []string) {
