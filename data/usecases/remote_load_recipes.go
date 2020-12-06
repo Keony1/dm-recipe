@@ -28,9 +28,10 @@ func (r *RemoteLoadRecipes) Load(search string) ([]*entities.Recipe, error) {
 		}
 
 		recipe := &entities.Recipe{
-			Title: ppRecipe.Title,
-			Link:  ppRecipe.Href,
-			Gif:   gifURL,
+			Title:       ppRecipe.Title,
+			Ingredients: ppRecipe.Ingredients,
+			Link:        ppRecipe.Href,
+			Gif:         gifURL,
 		}
 
 		recipes = append(recipes, recipe)
