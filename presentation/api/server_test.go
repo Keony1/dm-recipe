@@ -1,11 +1,14 @@
 package api
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/keony1/dm-recipe/domain/entities"
+	"github.com/keony1/dm-recipe/presentation/presenter"
 )
 
 func TestServer_recipes(t *testing.T) {
@@ -24,9 +27,21 @@ func TestServer_recipes(t *testing.T) {
 		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)
 
+		var r presenter.Response
+		json.Unmarshal(res.Body.Bytes(), &r)
+
+		assertKeyWords(t, r.Keywords, nil)
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
+}
+
+func assertKeyWords(t *testing.T, got, want []string) {
+	t.Helper()
+
+	if reflect.DeepEqual(got, want) {
+		t.Errorf("expecting response.Keywords to be %v, but got %v", got, want)
+	}
 }
 
 func assertStatusCode(t *testing.T, got, want int) {
