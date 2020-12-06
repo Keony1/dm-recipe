@@ -20,23 +20,25 @@ func TestServer_recipes(t *testing.T) {
 	}
 	spyLoadRecipes := SpyLoadRecipes{results: loadResults, err: nil}
 	server := NewServer(spyLoadRecipes)
-	res := httptest.NewRecorder()
 
 	t.Run("without ingredients", func(t *testing.T) {
 		req := newRecipesRequest("")
+		res := httptest.NewRecorder()
 
 		server.ServeHTTP(res, req)
 
 		var r presenter.Response
 		json.Unmarshal(res.Body.Bytes(), &r)
 
-		assertKeyWords(t, r.Keywords, nil)
+		wantKeyWords := make([]string, len(r.Keywords), cap(r.Keywords))
+		assertKeyWords(t, r.Keywords, wantKeyWords)
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
 	})
 
 	t.Run("with ingredients", func(t *testing.T) {
-		req := newRecipesRequest("banana, ice")
+		req := newRecipesRequest("banana,ice")
+		res := httptest.NewRecorder()
 		server.ServeHTTP(res, req)
 
 		var r presenter.Response
@@ -45,6 +47,17 @@ func TestServer_recipes(t *testing.T) {
 		assertKeyWords(t, r.Keywords, []string{"banana", "ice"})
 		assertContentType(t, res, jsonContentType)
 		assertStatusCode(t, res.Code, http.StatusOK)
+	})
+
+	t.Run("more than 3 ingredients", func(t *testing.T) {
+		req := newRecipesRequest("banana, ice, cream, rice")
+		res := httptest.NewRecorder()
+		server.ServeHTTP(res, req)
+
+		var r presenter.Response
+		json.Unmarshal(res.Body.Bytes(), &r)
+
+		assertStatusCode(t, res.Code, http.StatusBadRequest)
 	})
 }
 
@@ -57,8 +70,8 @@ func newRecipesRequest(i string) *http.Request {
 func assertKeyWords(t *testing.T, got, want []string) {
 	t.Helper()
 
-	if reflect.DeepEqual(got, want) {
-		t.Errorf("expecting response.Keywords to be %v, but got %v", got, want)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("expecting response.Keywords to be %v, but got %v", want, got)
 	}
 }
 
