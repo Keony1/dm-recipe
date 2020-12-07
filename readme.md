@@ -18,6 +18,9 @@ or you can build it by your-self
 docker build -t recipe .
 ```
 
+There is a `config.go` file inside config folder, you can change the value of GIPHY_KEY
+to use one of yours, but it already came configurated.
+
 ## API
 Has only one endpoint, which must respect the following call:
 
